@@ -1,0 +1,41 @@
+name: Actualización Diaria Monitor Legislativo
+
+on:
+  # Cron diario a las 11:00 UTC = 08:00 Uruguay (UTC-3)
+  schedule:
+    - cron: '0 11 * * 1-5'
+
+  # Permite ejecución manual desde la pestaña Actions
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Ejecutar script de actualización
+        id: update
+        run: python scripts/update.py
+
+      - name: Commit y push si hay cambios
+        run: |
+          git config user.name "Monitor Legislativo Bot"
+          git config user.email "bot@monitor-legislativo.github.io"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "Sin cambios para commitear."
+          else
+            git commit -m "🏛️ Actualización: $(date +'%Y-%m-%d') — ${{ steps.update.outputs.summary || 'verificación diaria' }}"
+            git push
+          fi
