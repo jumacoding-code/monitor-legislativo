@@ -341,6 +341,10 @@ def rebuild_html(data):
     fecha_str = f"{now.day} de {meses[now.month-1]} de {now.year}"
     html = re.sub(r"Actualizado al \d+ de \w+ de \d+", f"Actualizado al {fecha_str}", html)
 
+    # Actualizar constante LAST_UPDATED para el badge del header
+    iso_date = now.strftime("%Y-%m-%d")
+    html = re.sub(r"const LAST_UPDATED = '[^']*'", f"const LAST_UPDATED = '{iso_date}'", html)
+
     with open(HTML_FILE, "w", encoding="utf-8") as f:
         f.write(html)
 
