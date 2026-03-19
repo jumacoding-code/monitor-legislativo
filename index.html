@@ -2282,20 +2282,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-// Calculate last update date from DATA
+// Last update date — set at build time (updated by GitHub Actions or manually)
+const LAST_UPDATED = '2026-03-19';
 function getLastUpdateDate() {
-  let latest = null;
-  for (const item of DATA) {
-    if (!item.fecha) continue;
-    const parts = item.fecha.split('-');
-    if (parts.length === 3) {
-      const d = new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0]));
-      if (!latest || d > latest) latest = d;
-    }
-  }
-  if (!latest) return 'Sin datos';
+  const d = new Date(LAST_UPDATED + 'T12:00:00');
+  if (isNaN(d)) return 'Sin datos';
   const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-  return latest.getDate() + ' ' + meses[latest.getMonth()] + ' ' + latest.getFullYear();
+  return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
 }
 
 // Display last update
